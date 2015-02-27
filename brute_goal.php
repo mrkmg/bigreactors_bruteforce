@@ -24,32 +24,23 @@ $start_time = time();
 $numberX = $arguments['rods'];
 $numberO = $desired_size - $numberX;
 
-
-$totalOperations = 0;
-
-//perm($numberX, $numberO, 'X', $arguments['type'], function(){ global $totalOperations; $totalOperations++; });
-
-
-$operationRun = 0;
+$operationRun = isset($argv[7])?$operationRun=$argv[7]:0;
 $startTime = time();
 
+$totalToRun = factorial($desired_size) / (factorial($numberX) * factorial($numberO));
 
-$nLines = $arguments['length'] + 4;
-
-echo str_repeat(PHP_EOL, $nLines);
+$nLines = $arguments['length'] + 5;
 
 $tops = 0;
 $lastI = 0;
 
-perm($numberX, $numberO, 'X', $arguments['type'],
-//perm(4, 4, 'X', $arguments['type'],
-function ($str)
+$runner = function ($str)
 {
     global $best;
     global $arguments;
     global $nLines;
-    global $totalOperations;
     global $operationRun;
+    global $totalToRun;
     global $startTime;
 
     $operationRun++;
@@ -75,7 +66,7 @@ function ($str)
         $bLayout = explode("\n", $best->getLayoutPretty());
 
 
-        fwrite( STDOUT, "\033[" . $nLines . "A");
+        fwrite(STDOUT, "\033[" . $nLines . "A");
 
         fwrite(STDOUT, "\033[2K");
         echo str_pad("Power     :  " . round($bResult['power']),40,' ', STR_PAD_RIGHT);
@@ -96,17 +87,27 @@ function ($str)
             echo PHP_EOL;
         }
 
-        fwrite(STDOUT, "\033[2K");
 
         $time = time() - $startTime;
         if ($time == 0) $time = 1;
 
-        echo floor($operationRun / $time) . " t/s". PHP_EOL;
+        $amountLeft = $totalToRun - $operationRun;
+
+        $timeLeft = ($time / $operationRun) * $amountLeft;
+
+        fwrite(STDOUT, "\033[2K");
+        echo $operationRun . " of " . $totalToRun . "\t" . floor($operationRun / $time) . " t/s". PHP_EOL;
+        fwrite(STDOUT, "\033[2K");
+        echo 'Time Remianing: ' . secs_to_h($timeLeft).PHP_EOL;
     }
 
 
     unset($reactor);
-});
+};
+
+echo str_repeat(PHP_EOL, $nLines);
+
+perm($numberX, $numberO, 'X', $arguments['type'],$runner, $arguments['layout']);
 
 $bResult = $best->getResult();
 echo "===BEST===" . PHP_EOL;

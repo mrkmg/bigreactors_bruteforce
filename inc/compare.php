@@ -12,20 +12,18 @@ function compareReactorsResults($rA, $rB)
     $bothA = $powerA + ($efficiencyA / 10);
     $bothB = $powerB + ($efficiencyB / 10);
 
-//    if (abs(($powerA - $powerB)/$powerA) < .1)
-//        return $efficiencyA > $efficiencyB;
-
     return $bothA > $bothB;
 }
 
 function secs_to_h($secs)
 {
     $units = array(
-        "week"   => 7*24*3600,
-        "day"    =>   24*3600,
-        "hour"   =>      3600,
-        "minute" =>        60,
-        "second" =>         1,
+        "year"   => 365*24*3600,
+        "week"   =>   7*24*3600,
+        "day"    =>     24*3600,
+        "hour"   =>        3600,
+        "minute" =>          60,
+        "second" =>           1,
     );
 
     // specifically handle zero
@@ -53,15 +51,32 @@ function factorial($x) {
     return $x;
 }
 
+function allstrpos($haystack, $needle)
+{
+    $positions = array();
+    $str_len = strlen($haystack);
+    for( $i = 0; $i < $str_len; $i++)
+        if ($haystack{$i} == $needle) $positions[] = $i;
+
+    return $positions;
+}
 
 
-function perm($count1, $count2, $type1, $type2, $callable)
+function perm($count1, $count2, $type1, $type2, $callable, $defaul_start='')
 {
     $total = $count1 + $count2;
 
-    $arr = array_fill(0, $count1, $type1) + array_fill($count1, $count2, $type2);
+    if ( ! empty($defaul_start))
+    {
+        $slide = allstrpos($defaul_start, $type1);
+        $arr = str_split($defaul_start);
+    }
+    else
+    {
+        $slide = array($count1);
+        $arr = array_fill(0, $count1, $type1) + array_fill($count1, $count2, $type2);
+    }
 
-    $slide = array($count1);
 
     //Main Loop
     while (true)

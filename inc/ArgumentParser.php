@@ -39,6 +39,11 @@ class ArgumentParser
         {
             throw new Exception('Invalid fill type');
         }
+
+        if ( isset($raw[5]) && (strlen($raw[5]) != $raw[0] * $raw[1]))
+        {
+            throw new Exception('Default Reactor Wrong Length');
+        }
     }
 
     public function buildReturn()
@@ -49,6 +54,7 @@ class ArgumentParser
             'height' => $this->raw[2],
             'type' => $this->raw[3],
             'rods' => $this->raw[4],
+            'layout' => isset($this->raw[5])?$this->raw[5]:null,
         );
     }
 }
